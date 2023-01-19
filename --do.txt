@@ -1,0 +1,90 @@
+ auto properties = Properties::createNonRefCounted("Materials/2d_effects.material#sample");
+
+    // Print the properties of every namespace within this one.
+    printProperties(properties, 0);
+
+    Material *mat1 = Material::createWithProperties(properties);
+
+    auto spriteNoise = Sprite::create("Images/grossini.png");
+    spriteNoise->setPositionNormalized(Vec2(0.6f, 0.5f));
+    this->addChild(spriteNoise);
+    spriteNoise->setProgramState(mat1->getTechniqueByName("noise")->getPassByIndex(0)->getProgramState());
+
+effect 예제템플릿
+
+touhou.h
+'''
+/*class FFTCollection {
+		static FFTCollection fftCollection;
+		_ttfConfig* config;
+		void Init()
+	};*/
+	class PointInerface {
+	private:
+		UINT64 nowPoint;
+		UINT64 nowViewPoint;
+	public:
+		Label* pointView;
+		UINT64 updatePoint = 1;
+		std::string pointStr;
+		void Init(Node* node) {
+			pointStr = "000000000000";
+			Label::createWithTTF(TTFConfig("point.ttf"), pointStr);
+		}
+		void AddPoint(UINT64 point) {
+			nowPoint += point;
+		}
+		void ViewPoint() {
+			std::string nowPointStr = std::to_string(static_cast<long double>(nowViewPoint));
+			int pointIndex = strlen(nowPointStr.c_str());
+			int pointStrMax = pointStr.size();
+			for (int i = 0; i < pointIndex; i++) {
+				pointStr[pointStrMax - pointIndex + i] = nowPointStr[i];
+			}
+		}
+		void Update() {
+			if (nowViewPoint < nowPoint) {
+				nowViewPoint += updatePoint;
+				if (nowViewPoint > nowPoint) {
+					nowViewPoint = nowPoint;
+				}
+				ViewPoint();
+			}
+		}
+	};
+
+	class UserInterface {
+	public:
+		Rect hpBar;
+
+		Label* bossName;
+		Vec2 PlayOrigin;
+		Size PlaySize;
+		Node* playZone;
+		DrawNode* drawNode;
+		Node* drawZone;
+		Sprite* backGround;
+
+		void Init(Node* node) {
+			Vec2 visibleSize = Director::getInstance()->getVisibleSize();
+			playZone = Node::create();
+			//playZone->setAnchorPoint(Vec2(0, 0));
+			playZone->setPosition(Vec2(
+				visibleSize.y / 20,
+				visibleSize.y / 20)
+			);
+			playZone->setContentSize(Size(
+				visibleSize.x / 2 - visibleSize.y / 20,
+				visibleSize.y - visibleSize.y / 10
+			));
+			backGround = Sprite::create("th/gameWindow.png");
+			backGround->setPosition(Director::getInstance()->getVisibleSize() / 2);
+			drawNode = DrawNode::create();
+			if (backGround) {
+				node->addChild(backGround, 1);
+			}
+			playZone->addChild(drawNode, 0);
+			node->addChild(playZone);
+		}
+	};
+'''
